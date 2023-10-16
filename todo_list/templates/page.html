@@ -1,0 +1,49 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/styles.css' %}"></link>
+    <title>Document</title>
+</head>
+<body>
+    {% include "header.html" %}
+    <main class="main-flex">
+        <form class="todo-form container" method="post" action="{% url 'addTodo' %}">
+            {% csrf_token %}
+            <label for="title">Titulo</label>
+            <input type="text" name="title" id="title">
+            <label for="title">Descripcion</label>
+            <input type="text" name="description" id="description">
+            <div class="flex-center">
+                <input type="checkbox" name="completed" id="completed">
+                <label for="completed">Completado</label>
+            </div>
+            <input type="submit" value="Crear nota">
+        </form>
+        <ul class="flex-todo container scroll-container {% if not todos %} center {% endif %}">
+
+            {% if not todos %}
+                <p class="danger-text">No existen Todos</p>
+            {% endif %}
+
+            {% for todo in todos %}
+                <li class="flex-center {% if todo.completed %} completed {% endif %}">
+                    <div>
+                        <input type="checkbox" name="is_completed" value="{{ todo.completed }}" id="is_completed">
+                    </div>
+                    <h3>{{ todo.title }}</h3>
+                    <p>{{ todo.description }}</p>
+                    <div>
+                        <form method="DELETE" action="/delete/{{ todo.id }}">
+                            {% csrf_token %}
+                            <input style="display: none;" type="text" id="{{ todo.id }}" value="{{ todo.id }}">
+                            <button class="danger">Borrar</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
